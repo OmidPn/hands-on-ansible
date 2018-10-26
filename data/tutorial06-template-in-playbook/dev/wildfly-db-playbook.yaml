@@ -1,0 +1,45 @@
+---
+# play1 disable IP tables (firewall) for all hosts
+- hosts: dev-app-servers:dev-db-servers
+  sudo: yes
+
+  vars_prompt:
+  - name: username
+    prompt: What is your name
+  tasks:
+  - name: Stop IPtable now !!!
+    service: name=ufw state=stopped
+# play2
+- hosts: dev-app-servers
+  sudo: yes
+  # adding Apache module to the dev-app-servers
+  tasks:
+  - name: Ensure that Apache is installed
+    apt: name=apache2 state=present
+    when: ansible_os_family=="Debian"
+
+  - name: Starting Apache2 server service
+    service: name=apache2 enabled=yes state=started
+
+  - name: Deploy configuration File on Apache2
+    template: src=templates/apache2.bak.j2 dest=/home/vagrant/apache2.bak.conf
+    notify:
+    - Restart Apache2
+  - name: Copy web Site files
+    template: src=templates/index.j2 dest=/var/www/html/index.html
+  handlers:
+  - name: Restart Apache2
+    service: name=apache2 state=restarted
+
+
+# play3  tackling db-servers
+- hosts: dev-db-servers
+  sudo: yes
+
+  tasks:
+  - name: Adding MySql server
+    apt: name=mysql-server state=present update_cache=yes
+    when: ansible_os_family=="Debian"
+
+  - name: Starting MySql server
+    service: name=mysql enabled=yes state=started

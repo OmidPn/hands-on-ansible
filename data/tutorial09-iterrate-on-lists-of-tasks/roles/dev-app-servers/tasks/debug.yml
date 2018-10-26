@@ -1,0 +1,4 @@
+---
+  - name: Print version
+    debug:
+      msg: "********{{container}} ***** {{deployments}}*****"

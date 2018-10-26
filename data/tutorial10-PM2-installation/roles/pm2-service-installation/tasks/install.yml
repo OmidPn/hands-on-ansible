@@ -1,0 +1,58 @@
+---
+
+- name: create system group "{{pm2_group}}"
+  group:
+    name: "{{pm2_group}}"
+    system: yes
+    state: present
+
+- name: Install packages
+  npm:
+    name: pm2
+    global: yes
+    version: "{{ pm2_version | default(omit) }}"
+  notify: update pm2
+
+- name: Looking up user home
+  shell: >
+    egrep "^{{ pm2_user }}:" /etc/passwd | awk -F: '{ print $6 }'
+  changed_when: false
+  register: pm2_user_home
+
+- name: verify pm2 service already existing
+  command: "systemctl status {{ pm2_service_name }}"
+  register: service_verification
+  ignore_errors: True
+
+- name: show service_verification
+  debug:
+    msg: "{{service_verification}}"
+
+- name: Adding permanently PM2_HOME environment variable
+  lineinfile: dest=/etc/environment
+              line='PM2_HOME={{pm2_user_home.stdout}}/.pm2'
+              insertafter='EOF'
+              state=present
+
+- name: register PM2_HOME
+  shell: ". /home/{{vault_ansible_ssh_user}}/.bashrc && echo $PM2_HOME"
+  args:
+    executable: /bin/bash
+
+- name: show pm2_user_home
+  debug:
+    msg: "{{pm2_user_home.stdout}}/.pm2/"
+
+- name: "make sure that write access are given on the pm2 files owner = {{pm2_user}}  group = {{pm2_group}}"
+  file:
+    path: "{{pm2_user_home.stdout}}/.pm2/"
+    recurse: no
+    state: directory
+    owner: "{{pm2_user}}"
+    group: "{{pm2_group}}"
+    mode: 0770
+
+- name: Installing startup script
+  command: "pm2 startup -u {{ pm2_user }} --hp {{ pm2_user_home.stdout }} --service-name {{ pm2_service_name }}"
+  when: service_verification.stdout.find("PM2 process manager") == -1
+  notify: update permissions

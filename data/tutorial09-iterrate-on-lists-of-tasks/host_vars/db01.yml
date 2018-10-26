@@ -1,0 +1,5 @@
+---
+# this is just a config for host named db01
+
+username: db01
+passwrod: db012345

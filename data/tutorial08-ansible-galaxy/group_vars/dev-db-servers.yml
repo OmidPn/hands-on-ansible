@@ -1,0 +1,4 @@
+---
+# the file includes all setting running on db groups
+username: sqldb
+password: sqldb

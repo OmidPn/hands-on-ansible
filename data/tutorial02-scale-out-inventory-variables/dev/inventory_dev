@@ -1,0 +1,15 @@
+wildfly01 ansible_ssh_host=192.168.34.20
+db01 ansible_ssh_host=192.168.34.30
+
+[dev-app-servers]
+wildfly01
+
+[dev-db-servers]
+db01
+
+[dev-servers-east:children]
+dev-app-servers
+dev-db-servers
+[dev-servers-east:vars]
+ansible_ssh_user=vagrant
+ansible_ssh_pass=vagrant

@@ -1,0 +1,26 @@
+---
+# this playbook  disables IP tables (firewall) for all hosts
+- hosts: dev-app-servers:dev-db-servers
+  sudo: yes
+
+  tasks:
+  - name: Stop IPtable now !!!
+    service: name=ufw state=stopped
+# play2
+- hosts: dev-app-servers
+  sudo: yes
+# adding Apache module to the dev-app-servers
+  tasks: 
+   - name: Ensure that Apache is installed
+     apt: name=apache2 state=present
+   - name: Starting Apache2 server service
+     service: name=apache2 enabled=yes state=started
+ # play3  tackling db-servers
+- hosts: dev-db-servers
+  sudo: yes
+ 
+  tasks: 
+  - name: Adding MySql server
+    apt: name=mysql-server state=present update_cache=yes
+  - name: Starting MySql server
+    service: name=mysql enabled=yes state=started

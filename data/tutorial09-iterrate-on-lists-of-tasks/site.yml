@@ -1,0 +1,10 @@
+---
+- hosts: dev-app-servers
+  sudo: yes
+  gather_facts: no
+  roles:
+   - server-common
+
+#- include: webserver-playbook.yml
+#- include: db-server-playbook.yml
+- include: itterrate-tasks-playbook.yml

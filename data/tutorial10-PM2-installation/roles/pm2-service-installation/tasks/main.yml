@@ -1,0 +1,9 @@
+---
+# tasks file for pm2-service-installation
+
+  - import_tasks: install.yml
+    tags:
+      - web
+      - pm2
+      - install
+      - pm2-install

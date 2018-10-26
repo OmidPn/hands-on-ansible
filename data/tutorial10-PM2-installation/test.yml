@@ -1,0 +1,5 @@
+---
+- hosts: mongo01
+  remote_user: root
+  roles:
+    - pm2-service-installation

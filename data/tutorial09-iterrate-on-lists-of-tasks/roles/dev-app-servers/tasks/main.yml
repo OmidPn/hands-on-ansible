@@ -1,0 +1,17 @@
+---
+- name: Ensure that Apache2 is installed
+  apt: name=apache2 state=present
+
+- name: Starting Apache2 server service
+  service: name=apache2 enabled=yes state=started
+
+- name: Deploying configuration File in apache2 server
+  template: src=apache2.bak.j2 dest={{doc_dir}}apache2.bak.conf
+  notify:
+  - Restart apache2 service
+
+- name: Copy static site files into www/html directory
+  template: src=index.j2 dest={{doc_root}}index.html
+
+# including debug module to test
+- include: debug.yml

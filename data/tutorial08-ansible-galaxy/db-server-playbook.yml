@@ -1,0 +1,6 @@
+---
+- hosts: dev-db-servers
+  sudo: yes
+  roles:
+  - dev-db-servers
+  gather_facts: no 

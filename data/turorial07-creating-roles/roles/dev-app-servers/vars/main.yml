@@ -1,0 +1,6 @@
+---
+username: my name is Omid Panahi
+http_port: 8082
+doc_dir:  /etc/apache2/
+doc_root: /var/www/html/
+max_clients: 5

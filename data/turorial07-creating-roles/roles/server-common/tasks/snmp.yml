@@ -1,0 +1,6 @@
+---
+- name: Installing htop
+  apt: name=htop state=present
+
+- name: Make sure rsyslogd service is running
+  service: name=rsyslogd state=started
